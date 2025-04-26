@@ -14,6 +14,11 @@ app.use(cors({
 
 app.use(express.json());
 
+// ✅ Add a GET route for health check
+app.get('/', (req, res) => {
+  res.status(200).send('Server is up and running!');
+});
+
 // Improved email endpoint
 app.post('/send-email', async (req, res) => {
   const { email, message } = req.body;
@@ -23,7 +28,6 @@ app.post('/send-email', async (req, res) => {
   }
 
   try {
-    // More robust transporter configuration
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
@@ -38,7 +42,6 @@ app.post('/send-email', async (req, res) => {
       }
     });
 
-    // Verify connection configuration
     await transporter.verify((error, success) => {
       if (error) {
         console.log('Server verification error:', error);
@@ -64,7 +67,6 @@ app.post('/send-email', async (req, res) => {
     console.error('Full error details:', error);
     let errorMessage = 'Failed to send message';
     
-    // Handle specific Gmail errors
     if (error.code === 'EAUTH') {
       errorMessage = 'Authentication failed - check your email credentials';
     } else if (error.code === 'ECONNECTION') {
